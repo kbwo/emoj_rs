@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::{fs::File, io::Read};
 
 use serde_json::Value;
@@ -6,7 +7,7 @@ fn main() {
     println!("Hello, world!");
 }
 
-pub fn read_json() -> Result<Value, Box<(dyn std::error::Error + 'static)>> {
+pub fn read_json() -> Result<Value, Box<(dyn std::error::Error)>> {
     let mut emoji_file = File::open("node_modules/emojilib/dist/emoji-en-US.json")?;
     let mut emoji_file_str = String::new();
     emoji_file.read_to_string(&mut emoji_file_str)?;
@@ -14,10 +15,36 @@ pub fn read_json() -> Result<Value, Box<(dyn std::error::Error + 'static)>> {
     Ok(v)
 }
 
-pub fn search<'a>(query: &'a str) -> Vec<&'a str> {
-    let mut v = Vec::new();
-    v.push(query);
-    v
+pub fn search(query: &str) -> Result<Vec<String>, Box<(dyn std::error::Error)>> {
+    let re1 = Regex::new(r"\s").unwrap();
+    let re2 = Regex::new(r"\W").unwrap();
+    let lowercase = query.to_lowercase();
+    let regex_source = re1
+        .split(&lowercase)
+        .map(|x| {
+            re2.replace(x, "");
+            x
+        })
+        .filter(|x| x.len() > 0)
+        .collect::<Vec<&str>>()
+        .join("|");
+    let main_regex = Regex::new(regex_source.as_str()).unwrap();
+    let mut matched_emojis: Vec<String> = Vec::new();
+    let json_value = read_json()?;
+    let json_object = json_value.as_object().unwrap();
+    for (k, v) in json_object {
+        let values = v
+            .as_array()
+            .unwrap()
+            .into_iter()
+            .map(|x| -> &str { x.as_str().unwrap() })
+            .filter(|text| -> bool { main_regex.is_match(text) })
+            .collect::<Vec<&str>>();
+        if !values.is_empty() {
+            matched_emojis.push(k.as_str().to_string());
+        }
+    }
+    Ok(matched_emojis)
 }
 
 #[cfg(test)]
@@ -27,7 +54,15 @@ mod test {
     #[test]
     fn return_emoji() {
         let query = "face";
-        assert_eq!([query].to_vec(), search(query))
+        match search(query) {
+            Ok(result) => {
+                let is_contain = result.contains(&"😀".to_string());
+                assert_eq!(true, is_contain);
+            }
+            Err(e) => {
+                eprintln!("Something went wrong on searching: {}", e);
+            }
+        }
     }
 
     #[test]
