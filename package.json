@@ -1,0 +1,10 @@
+{
+  "name": "rust-emoj",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Kodai Kabasawa <kabaaa1126@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "emojilib": "^3.0.6"
+  }
+}
