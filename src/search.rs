@@ -1,14 +1,10 @@
 use regex::Regex;
-use std::fs::File;
-use std::io::Read;
 
 use serde_json::Value;
 
 fn read_json() -> Result<Value, Box<(dyn std::error::Error)>> {
-    let mut emoji_file = File::open("node_modules/emojilib/dist/emoji-en-US.json")?;
-    let mut emoji_file_str = String::new();
-    emoji_file.read_to_string(&mut emoji_file_str)?;
-    let v: Value = serde_json::from_str(emoji_file_str.as_str())?;
+    let emoji_file_str = include_str!("../node_modules/emojilib/dist/emoji-en-US.json");
+    let v: Value = serde_json::from_str(emoji_file_str)?;
     Ok(v)
 }
 
