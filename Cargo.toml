@@ -5,6 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "emojrs"
+path = "src/main.rs"
+
 [dependencies]
 arboard = "2.1.0"
 clap = "3.1.6"
