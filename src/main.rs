@@ -1,4 +1,4 @@
-use rust_emoj::*;
+use emoj_rs::*;
 use std::sync::Arc;
 
 use arboard::Clipboard;
