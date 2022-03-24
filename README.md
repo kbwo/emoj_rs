@@ -10,7 +10,7 @@ cargo install emoj_rs
 
 ## Usage
 ```
-$ emoj
+$ emojrs
 ```
 
 
