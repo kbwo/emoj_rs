@@ -1,6 +1,6 @@
 [package]
 name = "emoj_rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Kodai Kabasawa <kabaaa1126@gmail.com>"]
 description = "rust implementation of emoj"
